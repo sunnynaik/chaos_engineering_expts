@@ -1,0 +1,18 @@
+{
+    "title": "High Disk I/O load testing",
+    "description": "Generate high disk I/O load on an EC2 instance using fio",
+    "method": [
+        {
+            "type": "action",
+            "name": "generate-disk-io-load",
+            "provider": {
+                "type": "python",
+                "module": "subprocess",
+                "func": "run"
+            },
+            "configuration": {
+                "args": ["fio", "--name=benchmark", "--ioengine=sync", "--rw=randwrite", "--bs=4k", "--size=1G", "--numjobs=1", "--time_based", "--runtime=60s"]
+            }
+        }
+    ]
+}

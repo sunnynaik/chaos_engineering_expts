@@ -1,0 +1,21 @@
+{
+    "title": "High CPU load testing",
+    "description": "Generate high CPU load on an EC2 instance using stress-ng",
+    "method": [
+        {
+            "type": "action",
+            "name": "generate-cpu-load",
+            "provider": {
+                "type": "python",
+                "module": "subprocess",
+                "func": "run"
+            },
+            "configuration": {
+                "args": ["stress-ng", "--cpu", "1", "--timeout", "60s"],
+                "input": null,
+                "capture_output": null,
+                "shell": false
+            }
+        }
+    ]
+}

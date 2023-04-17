@@ -1,0 +1,54 @@
+{
+"title": "Our default language is English",
+"description": "We find the expected English language in the file",
+"steady-state-hypothesis": {
+    "title": "Our hypothesis is that lang file is in English",
+    "probes": [
+    {
+        "type": "probe",
+        "name": "lookup-lang-file",
+        "tolerance": true,
+        "provider": {
+        "type": "python",
+        "module": "os.path",
+        "func": "exists",
+        "arguments": {
+            "path": "default.locale.txt"
+        }
+        }
+    },
+    {
+        "type": "probe",
+        "name": "lookup-text-in-lang-file",
+        "tolerance": 0,
+        "provider": {
+        "type": "process",
+        "path": "grep",
+        "arguments": "welcome=hello default.locale.txt"
+        }
+    }
+    ]
+},
+"method": [
+    {
+    "type": "action",
+    "name": "switch-language-to-french",
+    "provider": {
+        "type": "process",
+        "path": "sed",
+        "arguments": "-i s/hello/bonjour/ default.locale.txt"
+    }
+    }
+],
+"rollbacks": [
+    {
+        "type": "action",
+        "name": "switch-language-back-to-english",
+        "provider": {
+        "type": "process",
+        "path": "sed",
+        "arguments": "-i s/bonjour/hello/ default.locale.txt"
+        }
+    }
+]
+}

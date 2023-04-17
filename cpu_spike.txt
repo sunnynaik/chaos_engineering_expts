@@ -1,0 +1,47 @@
+{
+  "title": "CPU Spike Experiment",
+  "description": "Inject a CPU spike by running the stress command on the local process.",
+  "steady-state-hypothesis": {
+    "title": "Service is running normally",
+    "probes": [
+      {
+        "type": "probe",
+        "name": "service-available",
+        "tolerance": 200,
+        "provider": {
+          "type": "http",
+          "url": "http://localhost:8080"
+        }
+      }
+    ]
+  },
+  "method": [
+    {
+      "type": "action",
+      "name": "create-cpu-spike",
+      "provider": {
+        "type": "python",
+        "module": "subprocess",
+        "func": "run",
+        "arguments": {
+          "args": ["stress", "-c", "1"]
+        },
+        "background": true
+      }
+    }
+  ],
+  "rollbacks": [
+    {
+      "type": "action",
+      "name": "kill-stress",
+      "provider": {
+        "type": "python",
+        "module": "os",
+        "func": "system",
+        "arguments": {
+          "command": "killall stress"
+        }
+      }
+    }
+  ]
+}
