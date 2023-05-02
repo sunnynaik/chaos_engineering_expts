@@ -1,0 +1,57 @@
+{
+    "title": "Test memory full scenario",
+    "description": "Fill up the memory and test if system can recover.",
+    "steady-state-hypothesis": {
+        "title": "Memory usage is below 80%",
+        "probes": [
+            {
+                "type": "probe",
+                "name": "memory-usage-below-threshold",
+                "tolerance": 80,
+                "provider": {
+                    "type": "python",
+                    "module": "psutil",
+                    "func": "virtual_memory",
+                    "arguments": {}
+                }
+            }
+        ]
+    },
+    "method": [
+        {
+            "type": "action",
+            "name": "fill-up-memory",
+            "provider": {
+                "type": "python",
+                "module": "subprocess",
+                "func": "run",
+                "arguments": {
+                    "args": ["stress", "--vm", "1", "--vm-bytes", "95%", "--timeout", "10s"]
+                }
+            }
+        },
+        {
+            "type": "probe",
+            "name": "memory-usage-above-threshold",
+            "tolerance": 70,
+            "provider": {
+                "type": "python",
+                "module": "psutil",
+                "func": "virtual_memory",
+                "arguments": {}
+            }
+        }
+    ],
+    "rollback": {
+        "type": "action",
+        "name": "stop-stress",
+        "provider": {
+            "type": "python",
+            "module": "subprocess",
+            "func": "run",
+            "arguments": {
+                "args": ["pkill", "stress"]
+            }
+        }
+    }
+}

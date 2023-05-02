@@ -1,0 +1,58 @@
+{
+        "title": "Test disk full scenario",
+        "description": "Fill up the disk space and test if system can recover.",
+        "steady-state-hypothesis": {
+                "title": "Disk usage is below 80%",
+                "probes": [{
+                        "type": "probe",
+                        "name": "disk-usage-below-threshold",
+                        "tolerance": 100,
+                        "provider": {
+                                "type": "python",
+                                "module": "psutil",
+                                "func": "disk_usage",
+                                "arguments": {
+                                        "path": "/"
+                                }
+                        }
+                }]
+        },
+        "method": [{
+                        "type": "action",
+                        "name": "fill-up-disk-space",
+                        "provider": {
+                                "type": "python",
+                                "module": "subprocess",
+                                "func": "run",
+                                "arguments": {
+                                        "args": ["dd", "if=/dev/zero", "of=/root/fillup", "bs=1M", "count=1000"]
+                                }
+                        }
+                },
+                {
+                        "type": "probe",
+                        "name": "disk-usage-above-threshold",
+                        "tolerance": 90,
+                        "provider": {
+                                "type": "python",
+                                "module": "psutil",
+                                "func": "disk_usage",
+                                "arguments": {
+                                        "path": "/"
+                                }
+                        }
+                }
+        ],
+        "rollback": {
+                "type": "action",
+                "name": "delete-fillup-file",
+                "provider": {
+                        "type": "python",
+                        "module": "os",
+                        "func": "remove",
+                        "arguments": {
+                                "path": "/root/fillup"
+                        }
+                }
+        }
+}
